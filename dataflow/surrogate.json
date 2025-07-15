@@ -1,0 +1,62 @@
+{
+	"name": "surrogate",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "surrogate_source",
+						"type": "DatasetReference"
+					},
+					"name": "source"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "surrogate_source",
+						"type": "DatasetReference"
+					},
+					"name": "sink"
+				}
+			],
+			"transformations": [
+				{
+					"name": "surrogateKey",
+					"description": "Adding EmpID from 100 to 1. Because in surrogate_source table there is not EmpID availbe. Here we will add it."
+				},
+				{
+					"name": "select"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          name as string,",
+				"          gender as string,",
+				"          country as string,",
+				"          department as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source",
+				"source keyGenerate(output(Empid as long),",
+				"     startAt: 100L,",
+				"     stepValue: 1L) ~> surrogateKey",
+				"surrogateKey select(mapColumn(",
+				"          Empid,",
+				"          name,",
+				"          gender,",
+				"          department,",
+				"          country",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select",
+				"select sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink"
+			]
+		}
+	}
+}

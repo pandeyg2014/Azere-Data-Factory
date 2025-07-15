@@ -1,0 +1,22 @@
+{
+	"name": "SqlServer1",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"parameters": {
+			"pipeline": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"type": "SqlServer",
+		"typeProperties": {
+			"server": "[]",
+			"database": "@{linkedService().pipeline}",
+			"encrypt": "mandatory",
+			"trustServerCertificate": false,
+			"authenticationType": "SQL",
+			"userName": "@{linkedService().pipeline}",
+			"password": "@{linkedService().pipeline}"
+		}
+	}
+}
