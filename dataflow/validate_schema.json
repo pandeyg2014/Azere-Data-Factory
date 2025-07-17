@@ -1,0 +1,30 @@
+{
+	"name": "validate_schema",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "validate_schema",
+						"type": "DatasetReference"
+					},
+					"name": "source"
+				}
+			],
+			"sinks": [],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          empid as string,",
+				"          name as string,",
+				"          dept as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: true,",
+				"     inferDriftedColumnTypes: true,",
+				"     ignoreNoFilesFound: false) ~> source"
+			]
+		}
+	}
+}
