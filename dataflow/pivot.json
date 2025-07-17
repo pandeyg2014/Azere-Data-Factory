@@ -6,7 +6,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "surrogate_source",
+						"referenceName": "pivot",
 						"type": "DatasetReference"
 					},
 					"name": "source"
@@ -15,7 +15,7 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "surrogate_source",
+						"referenceName": "pivot",
 						"type": "DatasetReference"
 					},
 					"name": "sink"
@@ -27,12 +27,30 @@
 				}
 			],
 			"scriptLines": [
-				"source(allowSchemaDrift: true,",
+				"source(output(",
+				"          id as string,",
+				"          name as string,",
+				"          gender as string,",
+				"          country as string,",
+				"          department as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     inferDriftedColumnTypes: true,",
 				"     ignoreNoFilesFound: false) ~> source",
-				"source aggregate() ~> aggregate",
+				"source aggregate(groupBy(name,",
+				"          gender,",
+				"          department),",
+				"     gender = gender) ~> aggregate",
 				"aggregate sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     input(",
+				"          id as string,",
+				"          name as string,",
+				"          gender as string,",
+				"          country as string,",
+				"          department as string",
+				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> sink"
 			]
