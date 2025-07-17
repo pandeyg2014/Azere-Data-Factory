@@ -1,5 +1,5 @@
 {
-	"name": "unpivot",
+	"name": "unpivot_transformation",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "AzureBlobStorage1",

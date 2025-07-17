@@ -1,12 +1,12 @@
 {
-	"name": "unpivot",
+	"name": "unpivot_transformation",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "unpivot",
+						"referenceName": "unpivot_transformation",
 						"type": "DatasetReference"
 					},
 					"name": "source"
@@ -15,15 +15,23 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "unpivot",
+						"referenceName": "unpivot_transformation",
 						"type": "DatasetReference"
 					},
-					"name": "sink"
+					"name": "sink",
+					"rejectedDataLinkedService": {
+						"referenceName": "linkedService",
+						"type": "LinkedServiceReference"
+					}
 				}
 			],
 			"transformations": [
 				{
 					"name": "unpivot"
+				},
+				{
+					"name": "select",
+					"description": "Renaming source to select with columns 'ProductID, ProductName, Month, Sales'"
 				}
 			],
 			"scriptLines": [
@@ -37,14 +45,21 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> source",
 				"source unpivot(output(",
-				"          Sales as string,",
-				"          ProductID as string,",
-				"          ProductName as string,",
-				"          Sales as string",
+				"          Sales as integer,",
+				"          Month as string",
 				"     ),",
+				"     ungroupBy(Sales),",
 				"     lateral: true,",
-				"     ignoreNullPivots: false) ~> unpivot",
-				"unpivot sink(allowSchemaDrift: true,",
+				"     ignoreNullPivots: true) ~> unpivot",
+				"source select(mapColumn(",
+				"          ProductID,",
+				"          ProductName,",
+				"          Month,",
+				"          Sales",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select",
+				"unpivot sink(allowSchemaDrift: false,",
 				"     validateSchema: false,",
 				"     input(",
 				"          ProductID as string,",
